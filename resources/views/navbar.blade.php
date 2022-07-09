@@ -1,6 +1,6 @@
 <nav class="navbar navbar-light bg-light shadow">
     <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Navbar</span>
+        <span class="navbar-brand mb-0 h1">{{ env("APP_NAME") }}</span>
         <button class="navbar-toggler" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -16,15 +16,12 @@
             </div>
             <div class="modal-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">An item</li>
-                    <li class="list-group-item">A second item</li>
-                    <li class="list-group-item">A third item</li>
-                    <li class="list-group-item">A fourth item</li>
-                    <li class="list-group-item">And a fifth one</li>
+                    <li class="list-group-item"><a class="text-decoration-none" href="{{ route('recibos.index') }}">Recibos</a></li>
+                    <li class="list-group-item"><a class="text-decoration-none" href="{{ route('recibos.index') }}">Relatórios</a></li>
                   </ul>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>

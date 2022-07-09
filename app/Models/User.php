@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'cpf', 
+        'level', 
+        'ativo', 
+        'hash'
     ];
 
     /**
@@ -40,5 +44,11 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'ativo' => 'boolean',
     ];
+    
+    public function recibos()
+    {
+        return $this->repository->hasMany(Recibo::class, "colaborador_id", "id");
+    }
 }

@@ -20,3 +20,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+Route::group(['prefix' => 'recibos'], function () {
+    Route::get('/', [App\Http\Controllers\RecibosController::class, 'index'])->name('recibos.index');
+});
