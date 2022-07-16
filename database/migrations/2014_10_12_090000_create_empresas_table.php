@@ -15,16 +15,16 @@ class CreateEmpresasTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('empresas', function(Blueprint $table) {
-            $table->id();
-            $table->string('nome_fantasia');
-            $table->string('cnpj', 14)->unique();
-            $table->json('endereco')->nullable();
-            $table->string('razao_social');
-            $table->string('inscricao_estadual');
-            $table->string('email')->unique();
-            $table->rememberToken();
-            $table->timestamps();
+		Schema::create('empresas', function (Blueprint $table) {
+			$table->id();
+			$table->string('nome_fantasia');
+			$table->string('cnpj', 14)->unique();
+			$table->json('endereco')->nullable();
+			$table->string('razao_social');
+			$table->string('inscricao_estadual');
+			$table->string('email')->unique();
+			$table->rememberToken();
+			$table->timestamp();
 		});
 	}
 

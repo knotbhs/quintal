@@ -1,6 +1,7 @@
 <nav class="navbar navbar-light bg-light shadow">
     <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">{{ env("APP_NAME") }}</span>
+        <a href="{{ isset($link_header) ? $link_header : url('/') }}"
+            class="navbar-brand mb-0 h1">{{ isset($title) ? $title : env('APP_NAME') }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -16,9 +17,11 @@
             </div>
             <div class="modal-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><a class="text-decoration-none" href="{{ route('recibos.index') }}">Recibos</a></li>
-                    <li class="list-group-item"><a class="text-decoration-none" href="{{ route('recibos.index') }}">Relatórios</a></li>
-                  </ul>
+                    <li class="list-group-item"><a class="text-decoration-none"
+                            href="{{ route('recibos.index') }}">Recibos</a></li>
+                    <li class="list-group-item"><a class="text-decoration-none"
+                            href="{{ route('recibos.index') }}">Relatórios</a></li>
+                </ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>

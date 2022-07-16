@@ -33,12 +33,10 @@ class Recibos extends Model implements Transformable
         'last_edit',
     ];
     protected $casts = [
-        "visible" => 'boolean',
-        "data" => 'datetime'
+        "visible" => 'boolean'
     ];
     public function user()
     {
         return $this->belongsTo(User::class, "colaborador_id", "id");
     }
-
 }

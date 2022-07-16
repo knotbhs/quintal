@@ -24,4 +24,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['prefix' => 'recibos'], function () {
     Route::get('/', [App\Http\Controllers\RecibosController::class, 'index'])->name('recibos.index');
+    Route::get('/novo', [App\Http\Controllers\RecibosController::class, 'novo'])->name('recibos.novo');
+    Route::post('/salvar', [App\Http\Controllers\RecibosController::class, 'update'])->name('recibos.salvar');
+    Route::get('/editar/{id}', [App\Http\Controllers\RecibosController::class, 'editar'])->name('recibos.editar');
+    Route::post('/search', [App\Http\Controllers\RecibosController::class, 'search'])->name('recibos.search');
+    Route::post('/search/servicos', [App\Http\Controllers\RecibosController::class, 'searchServicos'])->name('recibos.search.servico');
 });
