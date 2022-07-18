@@ -1,3 +1,6 @@
 .cursor-pointer{
     cursor: pointer;
 }
+.bg-select-recibo{
+    background-color: #d3d3d3;
+}

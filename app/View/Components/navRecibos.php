@@ -7,14 +7,22 @@ use Illuminate\View\Component;
 class navRecibos extends Component
 {
     public $btnactive;
+    public $datastart;
+    public $dataend;
+    public $texto;
+    public $pesquisarpor;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($btnactive)
+    public function __construct($btnactive, $datastart, $dataend, $texto, $pesquisarpor)
     {
         $this->btnactive = $btnactive;
+        $this->datastart = $datastart;
+        $this->dataend = $dataend;
+        $this->texto = $texto;
+        $this->pesquisarpor = $pesquisarpor;
     }
 
     /**

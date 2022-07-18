@@ -72,7 +72,7 @@ class RecibosController extends Controller
     }
     public function index()
     {
-        $recibos = $this->repository->all();
+        $recibos = $this->repository->orderBy("data", "asc")->get();
         $result = [];
         $result['title'] = "Recibos | " . env("APP_NAME");
         $result['recibos'] = $recibos;
@@ -138,6 +138,61 @@ class RecibosController extends Controller
             $result['recibos']['data'] = date('d/m/Y', strtotime($recibos['data']));
             return view('recibos.novo', $result);
         }
+    }
+    public function searchRecibosAll(Request $request)
+    {
+
+        $result = [];
+        $result['datastart'] = $request->data_start;
+        $result['dataend'] = $request->data_end;
+        $find = [];
+        if (isset($result['datastart']) && isset($result['dataend'])) {
+            $request->data_start = $this->dataBRtoEUA($request->data_start);
+            $request->data_end = $this->dataBRtoEUA($request->data_end);
+            $find = true;
+        }
+
+        $result['recibos'] = [];
+        if ($request->pesquisarpor == "colaborador" || $request->pesquisarpor == "all") {
+            $user = $this->user->where([["name", "LIKE", "%" . $request->texto . "%"]])->orderBy('name', 'asc')->get();
+            for ($i = 0; $i < count($user); $i++) {
+                $rec = $this->repository->where(["colaborador_id" => $user[$i]["id"]])->get();
+                if ($find) {
+                    $rec = $this->repository->where(["colaborador_id" => $user[$i]["id"], ["data", ">=", $request->data_start], ["data", "<=", $request->data_end]])->get();
+                }
+                for ($a = 0; $a < count($rec); $a++) {
+                    if ($rec[$a]) {
+                        $result['recibos'][] = $rec[$a];
+                    }
+                }
+            }
+        }
+        if ($request->pesquisarpor == "servico" || $request->pesquisarpor == "all") {
+            $servico = $this->servico->where([["name", "LIKE", "%" . $request->texto . "%"]])->orderBy('name', 'asc')->get();
+
+            for ($i = 0; $i < count($servico); $i++) {
+                $rec = $this->repository->where(["servico" => $servico[$i]["name"]])->get();
+                if ($find) {
+                    $rec = $this->repository->where(["servico" => $servico[$i]["name"], ["data", ">=", $request->data_start], ["data", "<=", $request->data_end]])->get();
+                }
+                for ($a = 0; $a < count($rec); $a++) {
+                    if ($rec[$a]) {
+                        $result['recibos'][] = $rec[$a];
+                    }
+                }
+            }
+        }
+        $result['pesquisarpor'] = $request->pesquisarpor;
+        $result['texto'] = $request->texto;
+        $recibos = $result['recibos'];
+        $result['title'] = "Recibos | " . env("APP_NAME");
+        $result['recibos'] = $recibos;
+        for ($i = 0; $i < count($recibos); $i++) {
+            $user = $this->user->find($recibos[$i]["colaborador_id"]);
+            $result['recibos'][$i]['user'] = isset($user) ? $user : null;
+        }
+        $result['btnactive'] = "relatorio";
+        return view('recibos.index', $result);
     }
     /**
      * Store a newly created resource in storage.
@@ -270,36 +325,19 @@ class RecibosController extends Controller
             } else {
                 $recibo = $this->repository->create($recibos);
             }
-            if ($formato == "save") {
-                $recibo1 = $this->GerarReciboHtml($recibo->id);
-                $recibo2 = $this->GerarReciboHtml(9);
-                $recibao = "<div style='width: 100%; height: 100%;'><div style='float:left; width: 49%;'>" . $recibo1 . "</div><div style='float:right; width: 49%;'>" . $recibo2 . "</div>" . "</div>";
-
-                $mpdf = new \Mpdf\Mpdf([
-                    'margin_top' => 3,
-                    'margin_bottom' => 3,
-                    'margin_left' => 3,
-                    'margin_right' => 3,
-                    'mirrorMargins' => true,
-                    'mode' => 'utf-8',
-                    'format' => 'A4-L'
-                ]);
-                $mpdf->WriteHTML($recibao);
-                $mpdf->Output("Recibo de Pagamento - " . $user["name"] . ".pdf", "I");
-            }
-
-
             $response = [
-                'message' => 'Recibos updated.',
+                'message' => 'Salvo com sucesso!',
                 'data'    => $recibo->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
-
-            return redirect()->back()->with('message', $response['message']);
+            //return $this->editar($recibo->id);
+            $retorno = [];
+            $retorno["message"] = $response['message'];
+            $retorno["recibos"] = $recibo;
+            return redirect()->back()->with($retorno)->withInput();
         } catch (ValidatorException $e) {
 
             if ($request->wantsJson()) {
@@ -400,7 +438,7 @@ class RecibosController extends Controller
 
         $conteudoRecibo = '<div style="border:1px solid #ccc; height: 90%; width:90%;margin:5%; line-height: 20px; font-family: ' . $family . ';">' . $top . $tituloRecibo . $bene . $dt_exec . $valExtenso . $servicoRef . $blocoAss   . '</div>';
 
-        $reciboFULL = '<div style="background:url(' . asset("images/bg-recibo.png") . ') no-repeat; background-image-resolution:300dpi;background-image-resize:5;float:left;  width: 100%; margin: 0px; padding: 0px; font-family:' . $family . '; text-align:center; border: 1px solid #ccc; ">' . $conteudoRecibo  . '</div>';
+        $reciboFULL = '<div style="background:url(' . asset("images/bg-recibo.png") . ') no-repeat; background-image-resolution:300dpi;background-image-resize:5;float:left;  width: 100%; height: 100%; margin: 0px; padding: 0px; font-family:' . $family . '; text-align:center; border: 1px solid #ccc; ">' . $conteudoRecibo  . '</div>';
 
 
         return $reciboFULL;
@@ -449,7 +487,7 @@ class RecibosController extends Controller
         date_default_timezone_set("America/Sao_Paulo");
         setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'Portuguese_Brazil');
         if (!$diasemana) {
-            return utf8_encode(strftime("%A, %d de %B de %Y", strtotime($this->dataEUA($date2))));
+            return utf8_encode(strftime("%d de %B de %Y - %A", strtotime($this->dataEUA($date2))));
         } else {
             return utf8_encode(strftime("%d de %B de %Y", strtotime($this->dataEUA($date2))));
         }
@@ -533,6 +571,67 @@ class RecibosController extends Controller
             return $dat[1] . "/" . $dat[2] . "/" . $dat[0];
         } else {
             return $data;
+        }
+    }
+    public function dataBRtoEUA($data)
+    {
+        $dat = explode("/", $data);
+        if (count($dat) == 3) {
+            return $dat[2] . "-" . $dat[1] . "-" . $dat[0];
+        } else {
+            return $data;
+        }
+    }
+    function imprimirRecibosSelecionados(Request $request)
+    {
+        if (count($request['select']) > 0) {
+            $reciboHTML = "<div style='width: 100%; height: 100%;'>";
+            for ($i = 0; $i < count($request['select']); $i++) {
+                $float = $i % 2 !== 1 ? "float:left;" : "float:right;";
+                $reciboHTML .= "<div style='" . $float . " width: 49%;'>" . $this->GerarReciboHtml($request['select'][$i]) . "</div>";
+            }
+
+            $mpdf = new \Mpdf\Mpdf([
+                'margin_top' => 3,
+                'margin_bottom' => 3,
+                'margin_left' => 3,
+                'margin_right' => 3,
+                'mirrorMargins' => true,
+                'mode' => 'utf-8',
+                'format' => 'A4-L'
+            ]);
+            $mpdf->WriteHTML($reciboHTML . "</div>");
+            $mpdf->Output("Recibos de Pagamento.pdf", "I");
+        }
+    }
+    public function searchRecibosDate(Request $request)
+    {
+
+        $result = [];
+        $result['datastart'] = $request->data_start;
+        $result['dataend'] = $request->data_end;
+
+        $request->data_start = $this->dataBRtoEUA($request->data_start);
+        $request->data_end = $this->dataBRtoEUA($request->data_end);
+
+        $recibos = $this->repository->where([["data", ">=", $request->data_start], ["data", "<=", $request->data_end]])->orderBy("data", "asc")->get();
+        $result['title'] = "Recibos | " . env("APP_NAME");
+        $result['recibos'] = $recibos;
+        for ($i = 0; $i < count($recibos); $i++) {
+            $user = $this->user->find($recibos[$i]["colaborador_id"]);
+            $result['recibos'][$i]['user'] = isset($user) ? $user : null;
+        }
+        $result['btnactive'] = "relatorio";
+        return view('recibos.index', $result);
+    }
+    public function deletarRecibo(Request $request)
+    {
+        $recibo = $this->repository->find($request->id);
+        if ($recibo) {
+            $ok = $this->repository->delete($request->id);
+            if ($ok) {
+                return redirect()->route("recibos.index");
+            }
         }
     }
 }

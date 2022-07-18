@@ -29,4 +29,8 @@ Route::group(['prefix' => 'recibos'], function () {
     Route::get('/editar/{id}', [App\Http\Controllers\RecibosController::class, 'editar'])->name('recibos.editar');
     Route::post('/search', [App\Http\Controllers\RecibosController::class, 'search'])->name('recibos.search');
     Route::post('/search/servicos', [App\Http\Controllers\RecibosController::class, 'searchServicos'])->name('recibos.search.servico');
+    Route::post('/search/date', [App\Http\Controllers\RecibosController::class, 'searchRecibosDate'])->name('recibos.search.date');
+    Route::post('/search/all', [App\Http\Controllers\RecibosController::class, 'searchRecibosAll'])->name('recibos.search.all');
+    Route::post('/imprimir', [App\Http\Controllers\RecibosController::class, 'imprimirRecibosSelecionados'])->name('recibos.imprimir.selecionados');
+    Route::post('/deletar', [App\Http\Controllers\RecibosController::class, 'deletarRecibo'])->name('recibos.deletar');
 });
