@@ -145,6 +145,8 @@ class RecibosController extends Controller
         $result = [];
         $result['datastart'] = $request->data_start;
         $result['dataend'] = $request->data_end;
+        $request->pesquisarpor = !isset($request->pesquisarpor) ? "all" : $request->pesquisarpor;
+        $request->texto = !isset($request->texto) ? "" : $request->texto;
         $find = [];
         if (isset($result['datastart']) && isset($result['dataend'])) {
             $request->data_start = $this->dataBRtoEUA($request->data_start);
@@ -177,7 +179,16 @@ class RecibosController extends Controller
                 }
                 for ($a = 0; $a < count($rec); $a++) {
                     if ($rec[$a]) {
-                        $result['recibos'][] = $rec[$a];
+                        $tem = false;
+                        for ($c = 0; $c < count($result['recibos']); $c++) {
+                            if ($result["recibos"][$c]['id'] == $rec[$a]["id"]) {
+
+                                $tem = true;
+                            }
+                        }
+                        if (!$tem) {
+                            $result['recibos'][] = $rec[$a];
+                        }
                     }
                 }
             }

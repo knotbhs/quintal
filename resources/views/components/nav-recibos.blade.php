@@ -13,6 +13,7 @@
         'url' => route('recibos.search.all'),
         'method' => 'POST',
         'class' => 'd-flex',
+        'id' => 'formFindDate',
     ]) !!}
     <div class="input-group">
         <input style="max-width: 130px;" onchange="findWithDate()" autocomplete="off" name="data_start"
