@@ -1,6 +1,6 @@
-@extends('welcome')
-@section('body')
-    <div class="container p-4">
+@extends('layouts.app')
+@section('content')
+    <div class="container">
         <x-navRecibos :btnactive="$btnactive" :datastart="isset($datastart) ? $datastart : null" :dataend="isset($dataend) ? $dataend : null" :texto="isset($texto) ? $texto : null" :pesquisarpor="isset($pesquisarpor) ? $pesquisarpor : null" />
         <table class="table table-hover mt-3">
             <thead>

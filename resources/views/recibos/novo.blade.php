@@ -1,7 +1,6 @@
-@extends('welcome')
-@section('body')
-    @csrf
-    <div class="container p-4">
+@extends('layouts.app')
+@section('content')
+    <div class="container">
         <x-navRecibos :btnactive="$btnactive" :datastart="isset($datastart) ? $datastart : null" :dataend="isset($dataend) ? $dataend : null" :texto="isset($texto) ? $texto : null" :pesquisarpor="isset($pesquisarpor) ? $pesquisarpor : null" />
         <div class="mt-3 p-4 bg-light">
             {!! Form::open([
@@ -10,6 +9,7 @@
                 'class' => 'm-0 p-0',
                 'id' => 'formSave',
             ]) !!}
+            @csrf
             <div class="mb-3 row">
                 @include('form.input', [
                     'value' => isset($recibos['user']['name']) ? $recibos['user']['name'] : '',
