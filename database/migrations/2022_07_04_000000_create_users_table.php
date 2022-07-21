@@ -15,18 +15,18 @@ class CreateUsersTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('users', function(Blueprint $table) {
-            $table->id();
-            $table->string('name');
+		Schema::create('users', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
 			$table->string('email')->unique()->nullable();
 			$table->string('cpf')->unique()->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+			$table->timestamp('email_verified_at')->nullable();
+			$table->string('password')->nullable();
 			$table->integer("level")->default(1);
 			$table->boolean("ativo")->default(true);
-			$table->text("hash");
-            $table->rememberToken();
-            $table->timestamps();
+			$table->text("hash")->nullable();
+			$table->rememberToken();
+			$table->timestamps();
 		});
 	}
 

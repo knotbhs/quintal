@@ -15,20 +15,20 @@ class CreateRecibosTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('recibos', function(Blueprint $table) {
-            $table->increments('id');
-			$table->foreignId('admin_id')->constrained('admins');
+		Schema::create('recibos', function (Blueprint $table) {
+			$table->increments('id');
+			$table->foreignId('admin_id')->constrained('users');
 			$table->foreignId('colaborador_id')->constrained('users');
 			$table->foreignId('empresa_id')->constrained('empresas');
-			$table->float('valor');
-			$table->string('servico');
-			$table->text('descricao');
+			$table->float('valor')->nullable();
+			$table->string('servico')->nullable();
+			$table->text('descricao')->nullable();
 			$table->date('data');
 			$table->boolean('visible')->default(true);
 			$table->integer('last_edit');
 			$table->timestamps();
 			$table->softDeletes();
-		});	
+		});
 	}
 
 	/**

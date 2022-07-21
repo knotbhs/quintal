@@ -302,8 +302,6 @@ class RecibosController extends Controller
 
             $empresa = $this->empresa->firstOrCreate(["cnpj" => "32325767000187"]);
 
-            $admin = [];
-            $admin["id"] = 1;
 
             $user = [];
             $user["cpf"] = $request["cpf"];
@@ -317,7 +315,7 @@ class RecibosController extends Controller
             $recibos["data"] = date("Y-m-d", strtotime(isset($data) ? $data[2] . "-" . $data[1] . "-" . $data[0] : date("Y-m-d")));
 
             $recibos['colaborador_id'] = $this->user->firstOrCreate($user)->id;
-            $recibos['admin_id'] = $this->user->firstOrCreate($admin)->id;
+            $recibos['admin_id'] = \Auth::user()->id;
             $recibos['empresa_id'] = $empresa->id;
             $serv = $this->servico->firstOrCreate(["name" => $recibos["servico"]]);
             $servico = [];
@@ -330,7 +328,7 @@ class RecibosController extends Controller
             } else {
                 $this->servico->update($servico, $serv->id);
             }
-            $recibos['last_edit'] = $admin["id"];
+            $recibos['last_edit'] = \Auth::user()->id;
             if ($recibos['id']) {
                 $recibo = $this->repository->update($recibos, $recibos['id']);
             } else {

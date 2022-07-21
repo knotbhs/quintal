@@ -17,14 +17,14 @@ class CreateEmpresasTable extends Migration
 	{
 		Schema::create('empresas', function (Blueprint $table) {
 			$table->id();
-			$table->string('nome_fantasia');
-			$table->string('cnpj', 14)->unique();
+			$table->string('nome_fantasia')->nullable();
+			$table->string('cnpj', 14)->unique()->nullable();
 			$table->json('endereco')->nullable();
-			$table->string('razao_social');
-			$table->string('inscricao_estadual');
-			$table->string('email')->unique();
+			$table->string('razao_social')->nullable();
+			$table->string('inscricao_estadual')->nullable();
+			$table->string('email')->unique()->nullable();
 			$table->rememberToken();
-			$table->timestamp();
+			$table->timestamps();
 		});
 	}
 
